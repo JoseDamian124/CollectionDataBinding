@@ -12,32 +12,39 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Configuration;
+using ChangeNotificationSample;
 
 namespace CollectionDataBinding_1
 {
 
     public partial class MainWindow : Window
     {
-        private List<User> users;
+        private ObservableCollection<User> users;
 
         public MainWindow()
         {
             InitializeComponent();
+            users = new ObservableCollection<User>();
             agregaruser();
+            DataContext = users;
                     
         }
         private void agregaruser()
         {
-            users.Add(new User { Name = "Jose Francisco Fernandez Damian" });
-
-            lista.ItemsSource = users;
+            users = new ObservableCollection<User>();
+            users.Add(new User() { Name = "Jose Francisco Fernandez Damian" });
+            //lista.ItemsSource = users;
+           
         }
 
         private void agregarButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrEmpty(userTextBox.Text))
+            if(!string.IsNullOrEmpty(userTextBox.Text))
             {
-                User user = new User() { Name = userTextBox.Text };
+                User user = new User() { Name = "Nuevo usuario" };
                 users.Add(user);
                 lista.SelectedItem = user;
                 UpdateView();
@@ -57,10 +64,9 @@ namespace CollectionDataBinding_1
 
         private void eliminarButton_Click(object sender, RoutedEventArgs e)
         {
-            if(lista.SelectedItem != null)
+           if(lista.SelectedItem != null)
             {
                 users.Remove(lista.SelectedItem as User);
-                userTextBox.Text = "";
                 UpdateView();
             }
         }
@@ -69,14 +75,15 @@ namespace CollectionDataBinding_1
             lista.Items.Refresh();
             if(users.Count > 0)
             {
-                eliminarButton.IsEnabled = true;
-                modificarButton.IsEnabled = true;
+                eliminarButton.IsEnabled = false;
+                modificarButton.IsEnabled = false;
+
             }
             else
             {
-                lista.SelectedIndex = -1;
                 eliminarButton.IsEnabled = false;
-                agregarButton.IsEnabled = false;
+                modificarButton.IsEnabled = false;
+                lista.SelectedIndex = -1;
             }
         }
 
